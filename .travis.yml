@@ -1,0 +1,22 @@
+sudo: false
+
+dist: trusty
+
+language: go
+
+os:
+  - linux
+
+go:
+  - '1.10'
+
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 >./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - go get github.com/axw/gocov/gocov
+  - chmod 700 ./cover.sh
+
+script:
+  - go test -v ./...
+  - "./cover.sh"
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
