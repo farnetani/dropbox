@@ -60,6 +60,7 @@ func List(config dropbox.Config, path string) (nodes []Node, err error) {
 func parseFolderMetadata(e *files.FolderMetadata) (n Node) {
 	n.IsFolder = true
 	n.Name = e.Name
+	n.Path = e.PathLower
 	return
 }
 
@@ -69,6 +70,7 @@ func parseFileMetadata(e *files.FileMetadata) (n Node) {
 	n.Rev = e.Rev
 	n.ServerModified = e.ServerModified
 	n.Size = e.Size
+	n.Path = e.PathLower
 	return
 }
 
