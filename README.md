@@ -7,6 +7,8 @@ A exemple how to use Dropbox unofficial API
 - Upload files
 - Download files
 - List files
+- Search files
+- Get information about the file
 
 ## Configuration
 

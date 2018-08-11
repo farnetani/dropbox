@@ -145,6 +145,7 @@ func Download(config dropbox.Config, fromFile, toFile string) (err error) {
 	return
 }
 
+// Search files and folders from dropbox
 func Search(config dropbox.Config, arg *files.SearchArg) (nodes []Node, More bool, Start uint64, err error) {
 
 	client := files.New(config)
@@ -175,5 +176,29 @@ func Search(config dropbox.Config, arg *files.SearchArg) (nodes []Node, More boo
 	}
 
 	return nodes, false, 0, nil
+
+}
+
+// Get information about the file or folder
+func GetFileInfo(config dropbox.Config, arg *files.GetMetadataArg) (node Node, err error) {
+
+	client := files.New(config)
+	res, err := client.GetMetadata(arg)
+
+	if err != nil {
+		return node, err
+	}
+
+	switch fm := res.(type) {
+
+	case *files.FileMetadata:
+		node = parseFileMetadata(fm)
+
+	case *files.FolderMetadata:
+		node = parseFolderMetadata(fm)
+
+	}
+
+	return node, nil
 
 }
