@@ -19,6 +19,7 @@ var (
 type Node struct {
 	IsFolder       bool
 	Name           string
+	Path           string
 	Size           uint64
 	Rev            string
 	ServerModified time.Time
@@ -140,4 +141,37 @@ func Download(config dropbox.Config, fromFile, toFile string) (err error) {
 	defer dst.Close() // nolint
 	_, err = io.Copy(dst, src)
 	return
+}
+
+func Search(config dropbox.Config, arg *files.SearchArg) (nodes []Node, More bool, Start uint64, err error) {
+
+	client := files.New(config)
+	res, err := client.Search(arg)
+
+	if err != nil {
+		return nil, false, 0, err
+	}
+
+	More = res.More
+	Start = res.Start
+
+	for _, v := range res.Matches {
+		var n Node
+
+		switch fm := v.Metadata.(type) {
+
+		case *files.FileMetadata:
+			n = parseFileMetadata(fm)
+
+		case *files.FolderMetadata:
+			n = parseFolderMetadata(fm)
+
+		}
+
+		nodes = append(nodes, n)
+
+	}
+
+	return nodes, false, 0, nil
+
 }
